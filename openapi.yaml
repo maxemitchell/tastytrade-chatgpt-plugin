@@ -1,0 +1,412 @@
+openapi: 3.0.1
+info:
+  title: tastytrade Account Positions and Balances plugin
+  version: 3.157.4
+servers:
+- url: http://localhost:3333
+paths:
+  /accounts/{account_number}/positions:
+    get:
+      description: Returns a list of the account's positions. Can be filtered by symbol,
+        underlying_symbol
+      operationId: getAccountsAccountNumberPositions
+      parameters:
+      - name: underlying-symbol
+        in: query
+        description: 'An array of Underlying symbol(s) for positions (example: underlying-symbol[]={value1}&underlying-symbol[]={value2})'
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: symbol
+        in: query
+        description: A single symbol. Stock Ticker Symbol `AAPL`, OCC Option Symbol
+          `AAPL  191004P00275000`, TW Future Symbol `/ESZ9`, or TW Future Option Symbol
+          `./ESZ9 EW4U9 190927P2975`
+        schema:
+          type: string
+      - name: instrument-type
+        in: query
+        description: The type of Instrument
+        schema:
+          type: string
+          enum:
+          - Bond
+          - Cryptocurrency
+          - Currency Pair
+          - Equity
+          - Equity Offering
+          - Equity Option
+          - Future
+          - Future Option
+          - Index
+          - Unknown
+          - Warrant
+      - name: include-closed-positions
+        in: query
+        description: If closed positions should be included in the query
+        schema:
+          type: boolean
+          default: false
+      - name: underlying-product-code
+        in: query
+        description: The underlying Future's Product code. i.e `ES`
+        schema:
+          type: string
+      - name: partition-keys
+        in: query
+        description: 'Account partition keys (example: partition-keys[]={value1}&partition-keys[]={value2})'
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: net-positions
+        in: query
+        description: Returns net positions grouped by instrument type and symbol
+        schema:
+          type: boolean
+          default: false
+      - name: include-marks
+        in: query
+        description: 'Include current quote mark (note: can decrease performance)'
+        schema:
+          type: boolean
+          default: false
+      - name: account_number
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Returns a list of the account's positions. Can be filtered
+            by symbol, underlying_symbol
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrentPosition'
+  /accounts/{account_number}/balances:
+    get:
+      description: Returns the current balance values for an account
+      operationId: getAccountsAccountNumberBalances
+      parameters:
+      - name: account_number
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Returns the current balance values for an account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountBalance'
+components:
+  schemas:
+    CurrentPosition:
+      type: object
+      properties:
+        account-number:
+          type: string
+          description: ""
+        symbol:
+          type: string
+          description: ""
+        instrument-type:
+          type: string
+          description: ""
+        underlying-symbol:
+          type: string
+          description: ""
+        quantity:
+          type: object
+          properties: {}
+          description: ""
+        quantity-direction:
+          type: string
+          description: ""
+        close-price:
+          type: number
+          description: ""
+          format: double
+        average-open-price:
+          type: number
+          description: ""
+          format: double
+        average-yearly-market-close-price:
+          type: number
+          description: ""
+          format: double
+        average-daily-market-close-price:
+          type: number
+          description: ""
+          format: double
+        mark:
+          type: number
+          description: ""
+          format: double
+        mark-price:
+          type: number
+          description: ""
+          format: double
+        multiplier:
+          type: integer
+          description: ""
+          format: int32
+        cost-effect:
+          type: string
+          description: ""
+        is-suppressed:
+          type: boolean
+          description: ""
+        is-frozen:
+          type: boolean
+          description: ""
+        restricted-quantity:
+          type: object
+          properties: {}
+          description: ""
+        expires-at:
+          type: string
+          description: ""
+          format: date-time
+        fixing-price:
+          type: number
+          description: ""
+          format: double
+        deliverable-type:
+          type: string
+          description: ""
+        realized-day-gain:
+          type: number
+          description: ""
+          format: double
+        realized-day-gain-effect:
+          type: string
+          description: ""
+        realized-day-gain-date:
+          type: string
+          description: ""
+          format: date
+        realized-today:
+          type: number
+          description: ""
+          format: double
+        realized-today-effect:
+          type: string
+          description: ""
+        realized-today-date:
+          type: string
+          description: ""
+          format: date
+        created-at:
+          type: string
+          description: ""
+          format: date-time
+        updated-at:
+          type: string
+          description: ""
+          format: date-time
+      description: CurrentPosition model
+    AccountBalance:
+      type: object
+      properties:
+        account-number:
+          type: string
+          description: ""
+        cash-balance:
+          type: number
+          description: ""
+          format: double
+        long-equity-value:
+          type: number
+          description: ""
+          format: double
+        short-equity-value:
+          type: number
+          description: ""
+          format: double
+        long-derivative-value:
+          type: number
+          description: ""
+          format: double
+        short-derivative-value:
+          type: number
+          description: ""
+          format: double
+        long-futures-value:
+          type: number
+          description: ""
+          format: double
+        short-futures-value:
+          type: number
+          description: ""
+          format: double
+        long-futures-derivative-value:
+          type: number
+          description: ""
+          format: double
+        short-futures-derivative-value:
+          type: number
+          description: ""
+          format: double
+        long-margineable-value:
+          type: number
+          description: ""
+          format: double
+        short-margineable-value:
+          type: number
+          description: ""
+          format: double
+        margin-equity:
+          type: number
+          description: ""
+          format: double
+        equity-buying-power:
+          type: number
+          description: ""
+          format: double
+        derivative-buying-power:
+          type: number
+          description: ""
+          format: double
+        day-trading-buying-power:
+          type: number
+          description: ""
+          format: double
+        futures-margin-requirement:
+          type: number
+          description: ""
+          format: double
+        available-trading-funds:
+          type: number
+          description: ""
+          format: double
+        maintenance-requirement:
+          type: number
+          description: ""
+          format: double
+        maintenance-call-value:
+          type: number
+          description: ""
+          format: double
+        reg-t-call-value:
+          type: number
+          description: ""
+          format: double
+        day-trading-call-value:
+          type: number
+          description: ""
+          format: double
+        day-equity-call-value:
+          type: number
+          description: ""
+          format: double
+        net-liquidating-value:
+          type: number
+          description: ""
+          format: double
+        cash-available-to-withdraw:
+          type: number
+          description: ""
+          format: double
+        day-trade-excess:
+          type: number
+          description: ""
+          format: double
+        pending-cash:
+          type: number
+          description: ""
+          format: double
+        pending-cash-effect:
+          type: string
+          description: ""
+        long-cryptocurrency-value:
+          type: number
+          description: ""
+          format: double
+        short-cryptocurrency-value:
+          type: number
+          description: ""
+          format: double
+        cryptocurrency-margin-requirement:
+          type: number
+          description: ""
+          format: double
+        unsettled-cryptocurrency-fiat-amount:
+          type: number
+          description: ""
+          format: double
+        unsettled-cryptocurrency-fiat-effect:
+          type: string
+          description: ""
+        closed-loop-available-balance:
+          type: number
+          description: ""
+          format: double
+        equity-offering-margin-requirement:
+          type: number
+          description: ""
+          format: double
+        long-bond-value:
+          type: number
+          description: ""
+          format: double
+        bond-margin-requirement:
+          type: number
+          description: ""
+          format: double
+        snapshot-date:
+          type: string
+          description: ""
+          format: date
+        time-of-day:
+          type: string
+          description: ""
+        reg-t-margin-requirement:
+          type: number
+          description: ""
+          format: double
+        futures-overnight-margin-requirement:
+          type: number
+          description: ""
+          format: double
+        futures-intraday-margin-requirement:
+          type: number
+          description: ""
+          format: double
+        maintenance-excess:
+          type: number
+          description: ""
+          format: double
+        pending-margin-interest:
+          type: number
+          description: ""
+          format: double
+        apex-starting-day-margin-equity:
+          type: number
+          description: ""
+          format: double
+        buying-power-adjustment:
+          type: number
+          description: ""
+          format: double
+        buying-power-adjustment-effect:
+          type: string
+          description: ""
+        effective-cryptocurrency-buying-power:
+          type: number
+          description: ""
+          format: double
+        updated-at:
+          type: string
+          description: ""
+          format: date-time
+      description: AccountBalance model

@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "tastytrade Plugin",
+  "name_for_model": "tastytrade",
+  "description_for_human": "Plugin for accessing your tastytrade account positions and balances.",
+  "description_for_model": "Plugin for managing your tastytrade brokerage account. You can view your account positions and balances.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "http://localhost:3333/openapi.yaml",
+    "is_user_authenticated": false
+  },
+  "logo_url": "http://localhost:3333/logo.png",
+  "contact_email": "legal@example.com",
+  "legal_info_url": "http://example.com/legal"
+}
